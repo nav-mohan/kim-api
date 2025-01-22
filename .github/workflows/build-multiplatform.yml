@@ -50,15 +50,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-10.15, macos-11]
+        os: [macos-13-large, macos-14-large]
         include:
-          - os: macos-10.15
-            DISTRO: macos_catalina
-            job_name: macOS Catalina 10.15 (debug)
+          - os: macos-13-large
+            DISTRO: macos_ventura
+            job_name: macOS Ventura 13 (debug)
 
-          - os: macos-11
-            DISTRO: macos_bigsur
-            job_name: macOS Big Sur 11 (debug)
+          - os: macos-14-large
+            DISTRO: macos_sonoma
+            job_name: macOS Sonoma 14 (debug)
 
     name: ${{ matrix.job_name }}
 
