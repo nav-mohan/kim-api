@@ -336,6 +336,7 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-doxygen
             mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-gcc-fortran
 
       - name: Ensure windows ccache dir exists
         run: |
@@ -355,6 +356,7 @@ jobs:
 
       - name: Build KIM API, run tests
         env:
+          FC: gfortran
           CMAKE_GENERATOR: MinGW Makefiles
           MAKE: mingw32-make
           CMAKE_MAKE_PROGRAM: mingw32-make
