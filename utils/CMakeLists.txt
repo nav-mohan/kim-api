@@ -35,6 +35,7 @@ include(RelocatablePath)
 set(PORTABLE_MODEL_INFO    ${PROJECT_NAME}-portable-model-info)
 set(SIMULATOR_MODEL        ${PROJECT_NAME}-simulator-model)
 set(COLLECTIONS_INFO       ${PROJECT_NAME}-collections-info)
+set(BASE64_ENCODE          ${PROJECT_NAME}-base64-encode)
 set(COLLECTIONS_MANAGEMENT ${PROJECT_NAME}-collections-management)
 set(SHARED_LIBRARY_TEST    ${PROJECT_NAME}-shared-library-test)
 set(ACTIVATE_SCRIPT        ${PROJECT_NAME}-activate)
@@ -126,6 +127,11 @@ target_include_directories(collections-info PRIVATE "${PROJECT_SOURCE_DIR}/cpp/s
 target_link_libraries(collections-info kim-api)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
+add_executable(base64-encode base64-encode.cpp)
+target_include_directories(base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src/")
+target_link_libraries(base64-encode kim-api)
+set_target_properties(base64-encode PROPERTIES OUTPUT_NAME ${BASE64_ENCODE})
+
 add_executable(shared-library-test shared-library-test.cpp)
 target_include_directories(shared-library-test PRIVATE "${PROJECT_BINARY_DIR}/cpp/include")
 target_link_libraries(shared-library-test ${CMAKE_DL_LIBS})
@@ -138,7 +144,7 @@ else()
   set(_dir "${CMAKE_INSTALL_RELOC_BINDIR}")
 endif()
 install(
-  TARGETS portable-model-info simulator-model collections-info shared-library-test
+  TARGETS portable-model-info simulator-model collections-info base64-encode shared-library-test
   EXPORT KIM_API_Targets
   DESTINATION "${_dir}"
   )

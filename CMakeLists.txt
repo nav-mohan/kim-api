@@ -47,12 +47,6 @@ else()
   set(_LOG_MAX "INFORMATION")
   set(CMAKE_BUILD_TYPE "Release") # Default to Release, solves KIM slowdown complaints
 endif()
-
-message(STATUS "KIM-API Build Type: ${CMAKE_BUILD_TYPE}")
-
-# C++ Language Standard, enforced to be C++11
-# set(CMAKE_CXX_STANDARD 11)
-
 set_cache_with_fallback(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" STRING "Maximum log verbosity")
 unset(_LOG_MAX)
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS "" SILENT FATAL ERROR WARNING INFORMATION DEBUG)
@@ -162,15 +156,6 @@ if(NOT WIN32 OR CYGWIN)
   target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 endif()
 
-
-# Keeping the name XXD for now, as otherwise this will result in much larger refactoring
-# But everywhere, XXD = base64-encode
-set(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/base64-encode)
-add_subdirectory(cpp/src/base64-encode)
-add_dependencies(kim-api base64-encode)
-install(TARGETS base64-encode
-    RUNTIME DESTINATION ${CMAKE_INSTALL_RELOC_BINDIR})
-
 # Add install rules for kim-api
 #
 install(TARGETS kim-api
@@ -191,9 +176,6 @@ install(
   DESTINATION
     "${CMAKE_INSTALL_RELOC_DOCDIR}"
   )
-# install kim-base64-encode in CMAKE_INSTALL_RELOC_BINDIR
-# install(TARGETS kim-base64-encode
-#   RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
 
 # Add include subdirectories
 #

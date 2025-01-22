@@ -28,6 +28,7 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include "base64-encode/base64.hpp"  // For base64 decoding
 #include <cstdio>
 #include <cstring>
 #ifndef _WIN32
@@ -53,10 +54,6 @@
 
 #ifndef KIM_SHARED_LIBRARY_SCHEMA_HPP_
 #include "KIM_SharedLibrarySchema.hpp"
-#endif
-
-#ifndef BASE64_HPP
-#include "base64-encode/base64.hpp"  // For base64 decoding
 #endif
 
 namespace
@@ -650,7 +647,6 @@ int SharedLibrary::WriteParameterFileDirectory()
     std::ofstream fl;
     fl.open(specificationFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
-
     std::vector<char> binary_line;
     binary_line.reserve(base64::decoded_size(len));
     std::pair<std::size_t, std::size_t> char_out_and_char_in
@@ -687,10 +683,8 @@ int SharedLibrary::WriteParameterFileDirectory()
     FILESYSTEM::Path const parameterFilePathName
         = parameterFileDirectoryName_ / parameterFileName;
     std::ofstream fl;
-
     fl.open(parameterFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
-
     int usable_chars = static_cast<int>(
         length);  // unsigned int to signed to avoid underflow
 
