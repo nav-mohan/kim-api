@@ -127,7 +127,7 @@ target_include_directories(collections-info PRIVATE "${PROJECT_SOURCE_DIR}/cpp/s
 target_link_libraries(collections-info kim-api)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
-add_executable(base64-encode base64-encode.cpp ${PROJECT_SOURCE_DIR}/cpp/src/libb64/libb64/src/cencode.c)
+add_executable(base64-encode base64-encode.cpp ${PROJECT_SOURCE_DIR}/cpp/src/libb64/libb64/src/cencode.c ${PROJECT_SOURCE_DIR}/cpp/src/libb64/libb64/src/cdecode.c)
 target_include_directories(base64-encode PRIVATE "${PROJECT_BINARY_DIR}/cpp/include")
 target_include_directories(base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src/libb64/libb64/include")
 set_target_properties(base64-encode PROPERTIES OUTPUT_NAME ${BASE64_ENCODE})

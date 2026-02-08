@@ -43,6 +43,9 @@
 #include <cstdlib>
 #include <sstream>
 
+#include <b64/decode.h>
+
+
 // Function which prints the usage of this executable
 void usage(std::string name)
 {
@@ -89,6 +92,89 @@ std::string make_c_identifier(const std::string & input)
 
   return output;
 }
+
+#include <vector>
+void decodeBase64FileInMemory(const std::string& inputfilename)
+{
+    std::cout << "opening encoded file " << inputfilename << std::endl;
+    std::ifstream file(inputfilename.c_str(), std::ios::in | std::ios::binary);
+    if (!file) throw std::runtime_error("Failed to open file");
+
+    // get file size
+    file.seekg(0, std::ios::end);
+    std::streamsize fileLength = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    if (fileLength <= 0) 
+    {
+        std::cout << "FILELENGTH < 0\n";
+        return;
+    }
+
+    std::vector<char> buffer((size_t)fileLength);
+    file.read(&buffer[0], fileLength);
+    if (!file) throw std::runtime_error("Failed to read file");
+
+    std::string content(buffer.begin(), buffer.end());
+
+    // extract the quoted part of the file assuming constant header and footer 
+    const std::string header = "extern unsigned char input_txt[] =";
+    const std::string footer = "extern unsigned int input_txt_len";
+    size_t start = content.find(header);
+    if (start == std::string::npos) throw std::runtime_error("Header not found");
+    start += header.size();
+    size_t end = content.find(footer, start);
+    if (end == std::string::npos) throw std::runtime_error("Footer not found");
+    std::string block = content.substr(start, end - start);
+
+    std::string base64Payload;
+    bool inString = false;
+    for (size_t i = 0; i < block.size(); ++i) 
+    {
+        char c = block[i];
+        if (c == '"') 
+        {
+            inString = !inString;   // toggle on/off
+            continue;
+        }
+
+        if (inString) {
+            base64Payload += c;
+        }
+    }
+
+    // remove whitespace just in case
+    for (size_t i = 0; i < base64Payload.size(); ) {
+        if (isspace((unsigned char)base64Payload[i]))
+            base64Payload.erase(i, 1);
+        else
+            ++i;
+    }
+
+    std::cout << "EXTRACTED BASE64 SIZE = " << base64Payload.size() << std::endl;
+
+    // start decode  
+    base64::decoder decoder;
+    std::istringstream encodedString(base64Payload);
+    std::ostringstream decodedString(std::ios::binary);
+
+    decoder.decode(encodedString, decodedString);
+
+    std::string decoded = decodedString.str();
+
+    std::cout << "DONE DECODING. SIZE = " << decoded.size() << std::endl;
+
+    // hex dump
+    // for (size_t i = 0; i < decoded.size(); ++i)
+        // printf("%02x ", (unsigned char)decoded[i]);
+    // printf("\n");
+
+    // print ascii
+    std::cout << "DECODED CONTENT \n";
+    std::cout.write(decoded.data(), decoded.size());
+    std::cout << std::endl;
+}
+
 
 int main(int argc, char ** argv)
 {
@@ -142,6 +228,9 @@ int main(int argc, char ** argv)
                        + "_len = sizeof(" + encodeFormatFileName + ") - 1;\n";
 
   outstream.write(footer.data(), footer.length());
+  outstream.close();
+
+  decodeBase64FileInMemory(output);
 
   return 0;
 }
